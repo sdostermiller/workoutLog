@@ -1,0 +1,12 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "description": "Workout Log App",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Shanna Ostermiller",
+  "github": "https://github.com/sdostermiller/workoutLog.git",
+  "license": "ISC"
+}
