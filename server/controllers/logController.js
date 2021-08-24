@@ -2,11 +2,11 @@
 const Express = require('express');
 const router = Express.Router();
 let validateJWT = require("../middleware/validate-jwt");
-const{ LogModel } = require('../models');
+const{LogModel} = require('../models');
 
-router.get('/practice', validateJWT, (req, res) => {
-    res.send('Hey!! This is a practice route!')
-});
+// router.get('/practice', validateJWT, (req, res) => {
+//     res.send('Hey!! This is a practice route!')
+// });
 
 //create log entry
 
@@ -29,16 +29,17 @@ router.post('/', validateJWT, async(req, res) => {
     }
 );
 
+//get all workout logs
 
 
-// router.get("/", async (req, res) => {
-//     try {
-//     const entries = await LogModel.findAll();
-//     res.status(200).json(entries);
-//     } catch (err) {
-//     res.status(500).json({error: err});
-//     }
-// });
+router.get("/all", async (req, res) => {
+    try {
+    const entries = await LogModel.findAll();
+    res.status(200).json(entries);
+    } catch (err) {
+    res.status(500).json({error: err});
+    }
+});
 
 //get log with user id of logged in user
 
@@ -60,48 +61,45 @@ router.get("/", validateJWT, async (req, res) =>{
 
 router.put("/:id", validateJWT, async (req, res) => {
     const { description, definition, result } = req.body.workoutLog;
-    const logEntryId = req.params.id;
-    const userId = req.user.id;
-
-    const query = {
-        where: {
-            id: logEntryId,
-            owner: userId
-        }
-    };
-
-    const updateLogEntry = {
-        description,
-        definition,
-        result
-    };
-
+       
     try {
-        const update = await LogModel.update(updatedLogEntry, query);
-        res.status(200).json(update);
-    }   catch (err) {
-        res.status(500).json({ error: err });
+        await LogModel.update(
+            { description, definition, result },
+            { where: {id: req.params.id }, returning: true }
+        ).then((result) => {
+            res.status(200).json({
+                message: "Log successfully updated",
+                updatedWorkoutLog: result,
+            });
+        });
+    } catch (err) {
+        res.status(500).json({
+            message: `Failed to update pie: ${err}`,
+        });
     }
 });
+
+  
 
 
 // Delete entry
 
-router.delete("/delete/:id", validateJWT, async (req, res) => {
-    const ownerId = req.user.id;
-    const journalId = req.params.id;
-
+router.delete("/:id", validateJWT, async (req, res) => {
     try {
-        const query = {
+        const deletedLog = await LogModel.destroy({
             where: {
-                id: logEntryId,
-                owner: ownerId
+                id: req.params.id
             }
-        };
-        await LogModel.destroy(query);
-        res.status(200).json({ message: "Log Entry Removed" });
+        })
+        res.status(200).json({ 
+            message: "Log Entry Removed",
+            deletedLog,
+         });
     } catch (err) {
-        res.status(500).json({ error: err });
+        res.status(500).json({ 
+            message: "Failed to delete log.",
+            error: e
+         });
     }
 });
 

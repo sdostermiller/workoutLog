@@ -7,9 +7,9 @@ const bcrypt = require("bcryptjs");
 const User = require("../models/user");
 
 router.post("/register", async (req, res) => {
-    let { firstName, lastName, userName, email, password } = req.body.user;
+    const { firstName, lastName, userName, email, password } = req.body.user;
     try {
-    await UserModel.create({
+    const newUser =await UserModel.create({
         firstName,
         lastName,
         userName,

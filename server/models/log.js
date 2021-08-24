@@ -1,7 +1,7 @@
 const { DataTypes } = require("sequelize");
 const db = require("../db");
 
-const workoutLog = db.define("workoutLog", {
+const WorkoutLog = db.define("workoutLog", {
     description: {
         type: DataTypes.STRING,
         allowNull: false,
@@ -19,4 +19,4 @@ const workoutLog = db.define("workoutLog", {
     }
 });
 
-module.exports = workoutLog;
+module.exports = WorkoutLog;
