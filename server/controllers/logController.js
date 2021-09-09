@@ -11,8 +11,10 @@ const{LogModel} = require('../models');
 //create log entry
 
 router.post('/', validateJWT, async(req, res) => {
-    const { description, definition, result } = req.body.workoutLog;
-    const { id } = req.user;
+    const { description, definition, result } = req.body;
+    const id  = req.user.id
+    ;
+    console.log(req.user)
     const logEntry = {
         description,
         definition,
@@ -60,7 +62,7 @@ router.get("/", validateJWT, async (req, res) =>{
 //updates log by log id
 
 router.put("/:id", validateJWT, async (req, res) => {
-    const { description, definition, result } = req.body.workoutLog;
+    const { description, definition, result } = req.body;
        
     try {
         await LogModel.update(
@@ -74,7 +76,7 @@ router.put("/:id", validateJWT, async (req, res) => {
         });
     } catch (err) {
         res.status(500).json({
-            message: `Failed to update pie: ${err}`,
+            message: `Failed to update log: ${err}`,
         });
     }
 });
